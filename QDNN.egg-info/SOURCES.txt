@@ -1,0 +1,7 @@
+README.md
+setup.py
+QDNN.egg-info/PKG-INFO
+QDNN.egg-info/SOURCES.txt
+QDNN.egg-info/dependency_links.txt
+QDNN.egg-info/requires.txt
+QDNN.egg-info/top_level.txt

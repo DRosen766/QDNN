@@ -24,9 +24,9 @@ class QDNNL():
         # size will be: num_qubits *(2 + self.D_epsilon * 3)
         self.encoder_parameters = list()
         # parameters of transformer circuit, stored as one dimensional vector
-        # self.transformer_parameters = [(rand() * 2 * np.pi) - np.pi for _ in range(self.num_qubits *(self.D_gamma * 3 + 2))]
-        self.transformer_parameters = np.zeros(self.num_qubits *(self.D_gamma * 3 + 2)) # TEMP
-        self.transformer_parameters[0] = np.pi
+        self.transformer_parameters = [(rand() * 2 * np.pi) - np.pi for _ in range(self.num_qubits *(self.D_gamma * 3 + 2))]
+        # self.transformer_parameters = np.zeros(self.num_qubits *(self.D_gamma * 3 + 2)) # TEMP
+        # self.transformer_parameters[0] = np.pi
         # initialize quantum objects
         self.backend = Aer.get_backend('aer_simulator')
         
@@ -63,15 +63,17 @@ class QDNNL():
     def _build_encoder(self):
         encoder = QuantumCircuit(self.num_qubits)
         
-        # encoder.rx(np.pi, range(self.num_qubits))
-        # encoder.rz(np.pi, range(self.num_qubits))
-        # encoder.barrier(range(self.num_qubits))
-        # for _ in range(self.D_epsilon):
-        #     encoder = encoder.compose(self._build_ent(), range(self.num_qubits))
-        #     encoder.rz(np.pi, range(self.num_qubits))
-        #     encoder.rx(np.pi, range(self.num_qubits))
-        #     encoder.rz(np.pi, range(self.num_qubits))
-        #     encoder.barrier(range(self.num_qubits))
+        encoder.rx(np.pi, range(self.num_qubits))
+        encoder.rz(np.pi, range(self.num_qubits))
+        encoder.barrier(range(self.num_qubits))
+        encoder.barrier(range(self.num_qubits))
+        for _ in range(self.D_epsilon):
+            encoder = encoder.compose(self._build_ent(), range(self.num_qubits))
+            encoder.barrier(range(self.num_qubits))
+            encoder.rz(np.pi, range(self.num_qubits))
+            encoder.rx(np.pi, range(self.num_qubits))
+            encoder.rz(np.pi, range(self.num_qubits))
+            encoder.barrier(range(self.num_qubits))
             
         return encoder
     
@@ -84,12 +86,16 @@ class QDNNL():
         param_index = 0
         for _ in range(self.D_gamma):
             transformer = transformer.compose(self._build_ent(), range(self.num_qubits))
-            transformer.rz(self.transformer_parameters[param_index], range(self.num_qubits))
-            param_index+=self.num_qubits
-            transformer.rx(self.transformer_parameters[param_index], range(self.num_qubits))
-            param_index+=self.num_qubits
-            transformer.rz(self.transformer_parameters[param_index], range(self.num_qubits))
-            param_index+=self.num_qubits
+            transformer.barrier(range(self.num_qubits))
+            for qb in range(self.num_qubits):
+                transformer.rz(self.transformer_parameters[param_index], qb)
+                param_index+=1
+            for qb in range(self.num_qubits):
+                transformer.rx(self.transformer_parameters[param_index], qb)
+                param_index+=1
+            for qb in range(self.num_qubits):
+                transformer.rz(self.transformer_parameters[param_index], qb)
+                param_index+=1
             transformer.barrier(range(self.num_qubits))
         for qb in range(self.num_qubits):
             transformer.rx(self.transformer_parameters[param_index], qb)
@@ -141,13 +147,14 @@ class QDNNL():
             sum_counts += count
             sum_results += [int(i) * count for i in result]
         average_results = sum_results / sum_counts
-        return average_results / norm(average_results)
-    
+        average_norm = norm(average_results)
+        if average_norm != 0:
+            return average_results / average_norm
+        else:
+            return average_results
     def calculate_loss(self, output, target, type="MSE"):
         if type == "MSE":
-            diff = output - target
-            squared = diff ** 2
-            return np.sum(squared)/len(output)
+            return np.sum(np.subtract(output, target) ** 2)/len(output)
 
     
     # this function only runs the transformer and is used for calculating loss for the transformer's parameters
@@ -213,5 +220,4 @@ class QDNN():
     def __init__(self) -> None:
         # fixed theta used in encoding circuits
         self.theta = np.pi / 4
-        pass
-    
+        self.input_layer = QDNNL()
