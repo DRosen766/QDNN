@@ -7,7 +7,7 @@ import numpy as np
 from numpy.random import rand
 from numpy.linalg import norm
 
-from qdnn import QDNNL
+from qdnn.qdnn import QDNNL
 # pygame setup
 pygame.init()
 screen = pygame.display.set_mode((400, 400))

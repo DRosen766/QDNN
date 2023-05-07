@@ -4,7 +4,7 @@ from qiskit.tools.visualization import plot_histogram, plot_state_city
 from qiskit import Aer, transpile
 from qiskit.extensions import HamiltonianGate
 import numpy as np
-from qdnn import QDNNL
+from qdnn.qdnn import QDNNL
 from matplotlib import pyplot as plt
 # build hamiltonians
 from tqdm import tqdm

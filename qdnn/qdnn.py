@@ -9,13 +9,13 @@ from qiskit.extensions import HamiltonianGate, UnitaryGate
 
 # Quantum Deep Neural Network Layer
 class QDNNL():
-    def __init__(self, num_qubits, D_epsilon, D_gamma, hamiltonians=None):
+    def __init__(self, num_qubits, D_epsilon, D_gamma, epsilon = 1.0, hamiltonians=None):
         if hamiltonians == None:
             hamiltonians = [np.eye(2 ** num_qubits)]
         self.num_qubits = num_qubits
         self.D_epsilon = D_epsilon
         self.D_gamma = D_gamma
-        self.epsilon = 0.0
+        self.epsilon = epsilon
         self.learning_rate = 0.05
         self.hamiltonians = [UnitaryGate(h) for h in hamiltonians]
         # inputs from most recent forward propogation
