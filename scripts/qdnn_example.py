@@ -9,11 +9,15 @@ from matplotlib import pyplot as plt
 from tqdm import tqdm
 # construct layer
 input_layer = QDNNL(4, 1, 1)
+
+# initialize input
 input = np.zeros(16)
 input[1] = 1
 
-losses = list()
+# initialize target
 target = np.array([0,1,0,0])
+
+losses = list()
 for i in tqdm(range(200)):
     input_layer.epsilon *= 0.95
     results = input_layer.forward(input)
