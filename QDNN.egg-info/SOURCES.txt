@@ -1,3 +1,4 @@
+.gitignore
 Figure_1.png
 README.md
 __init__.py
@@ -1111,4 +1112,3 @@ qdnn-venv/Scripts/pip3.exe
 qdnn-venv/Scripts/python.exe
 qdnn-venv/Scripts/pythonw.exe
 scripts/qdnn_example.py
-scripts/rl_example.py

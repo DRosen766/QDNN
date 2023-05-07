@@ -25,8 +25,7 @@ class QDNNL():
         self.encoder_parameters = list()
         # parameters of transformer circuit, stored as one dimensional vector
         self.transformer_parameters = [(rand() * 2 * np.pi) - np.pi for _ in range(self.num_qubits *(self.D_gamma * 3 + 2))]
-        # self.transformer_parameters = np.zeros(self.num_qubits *(self.D_gamma * 3 + 2)) # TEMP
-        # self.transformer_parameters[0] = np.pi
+        
         # initialize quantum objects
         self.backend = Aer.get_backend('aer_simulator')
         
@@ -203,16 +202,6 @@ class QDNNL():
         self._build_transformer()
         self._build_complete_circuits()
         
-        
-class InputLayer(QDNNL):
-    def __init__(self, num_qubits, D_epsilon, D_gamma):
-        super().__init__(num_qubits, D_epsilon, D_gamma)
-        # prepare quantum circuit
-        self.input_layer = QuantumCircuit(QuantumRegister(num_qubits), ClassicalRegister(num_qubits))
-        # add encoder circuit to layer
-        self.input_layer = self.input_layer.compose(self._build_encoder(),range(self.num_qubits))
-        self.input_layer = self.input_layer.compose(self._build_transformer(),range(self.num_qubits))
-        
 
 
 class QDNN():
@@ -220,4 +209,13 @@ class QDNN():
     def __init__(self) -> None:
         # fixed theta used in encoding circuits
         self.theta = np.pi / 4
-        self.input_layer = QDNNL()
+        self.model = [QDNNL(4,1,1), QDNNL(2,1,1)]
+        
+    def forward(self, input, epsilon_greedy = True):
+        pass
+    def calculate_loss(self, output, target, type="MSE"):
+        pass
+    def backpropogate_error(self, loss):
+        pass
+    def update_weights(self, transformer_gradients):
+        pass

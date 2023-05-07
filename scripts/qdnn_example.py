@@ -12,7 +12,7 @@ input_layer = QDNNL(4, 1, 1)
 
 # initialize input
 input = np.zeros(16)
-input[1] = 1
+input[2] = 1
 
 # initialize target
 target = np.array([0,1,0,0])
@@ -30,6 +30,8 @@ plt.xlabel("timestep")
 plt.ylabel("loss")
 plt.plot(range(len(losses)), losses)
 plt.show()
-print(input_layer.complete_circuits[0].draw())
+plt.savefig("loss", format="png")
+for circuit in input_layer.complete_circuits:
+    print(circuit.draw())
 # for result in results:
 #     print(result)
