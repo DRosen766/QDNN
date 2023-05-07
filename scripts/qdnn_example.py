@@ -1,4 +1,3 @@
-import qiskit
 from qiskit.circuit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.tools.visualization import plot_histogram, plot_state_city
 from qiskit import Aer, transpile
